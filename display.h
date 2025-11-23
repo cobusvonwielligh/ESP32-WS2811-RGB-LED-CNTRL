@@ -1,4 +1,5 @@
 #pragma once
+#include <Arduino.h>
 #include <Adafruit_SSD1306.h>
 
 #define SCREEN_WIDTH 128
@@ -10,8 +11,9 @@
  *        SSD1306 OLED Display Driver
  * ========================================= */
 
-
 extern Adafruit_SSD1306 display;
 
-void initDisplay(Adafruit_SSD1306& d);
-void displayMessage(String message);
+bool initDisplay();
+bool displayIsReady();
+void displayMessage(const String& message);
+
