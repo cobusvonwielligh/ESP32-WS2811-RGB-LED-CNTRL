@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include "display.h"
-#include "secrets.h"
 
 /* ============================================================
       Display Utilities: SSD1306
