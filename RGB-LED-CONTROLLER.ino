@@ -82,6 +82,58 @@ enum Mode {
 SystemState systemState = STATE_OFF;
 Mode currentMode = MODE_RAINBOW;
 
+struct ModeBinding {
+  char key;
+  Mode mode;
+  const char* label;
+  void (*handler)();
+};
+
+const ModeBinding MODES[] = {
+  {'1', MODE_STATIC_RED, "STATIC RED", modeStaticRed},
+  {'2', MODE_STATIC_GREEN, "STATIC GREEN", modeStaticGreen},
+  {'3', MODE_STATIC_BLUE, "STATIC BLUE", modeStaticBlue},
+  {'4', MODE_STATIC_WHITE, "STATIC WHITE", modeStaticWhite},
+  {'5', MODE_RAINBOW, "RAINBOW", modeRainbow},
+  {'6', MODE_CHASE, "CHASE", modeChase},
+  {'7', MODE_HOME_STATUS, "HOME STATUS", modeHomeStatus},
+  {'8', MODE_HEALTH_BAR, "HEALTH BAR", modeHealthBar},
+  {'9', MODE_VU_METER, "VU METER", modeVuMeter},
+  {'a', MODE_DUAL_BEACON, "DUAL BEACON", modeDualBeacon},
+  {'b', MODE_AMBER_WAVE, "AMBER WAVE", modeAmberWave},
+  {'c', MODE_RED_SCANNER, "RED SCAN", modeRedScanner},
+  {'d', MODE_SECTION_SPARKLE, "SECTION SPARKLE", modeSectionSparkle},
+  {'e', MODE_CAPABILITY_DEMO, "CAPABILITY DEMO", modeCapabilityDemo}
+};
+
+const size_t MODE_COUNT = sizeof(MODES) / sizeof(MODES[0]);
+
+const ModeBinding* findModeByKey(char key) {
+  for (size_t i = 0; i < MODE_COUNT; i++) {
+    if (MODES[i].key == key) {
+      return &MODES[i];
+    }
+  }
+  return nullptr;
+}
+
+const ModeBinding* findModeById(Mode mode) {
+  for (size_t i = 0; i < MODE_COUNT; i++) {
+    if (MODES[i].mode == mode) {
+      return &MODES[i];
+    }
+  }
+  return nullptr;
+}
+
+const char* modeName(Mode mode) {
+  const ModeBinding* binding = findModeById(mode);
+  if (binding) {
+    return binding->label;
+  }
+  return "UNKNOWN";
+}
+
 // ----------------------------
 // Forward declarations
 // ----------------------------
