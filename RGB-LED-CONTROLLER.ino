@@ -35,7 +35,6 @@ Mode currentMode       = MODE_STATIC_RED;
 // ----------------------------
 // Forward declarations
 // ----------------------------
-void initOled();
 void updateOledStatus();
 void setAll(const CRGB& c);
 void runCurrentMode();
@@ -52,11 +51,13 @@ void setup() {
 
   // --- OLED / I2C ---
   Wire.begin();
-  display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR);
-  initDisplay(display);
-
-  displayMessage("Booting...\nLED Controller");
-  delay(1000);
+  bool displayOk = initDisplay();
+  if (!displayOk) {
+    Serial.println(F("[BOOT] OLED init failed - check wiring"));
+    systemState = STATE_ERROR;
+  } else {
+    displayMessage("Booting...\nLED Controller");
+  }
 
   // --- FastLED strip init ---
   FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS)
@@ -67,7 +68,9 @@ void setup() {
   setAll(CRGB::Black);
   FastLED.show();
 
-  systemState = STATE_OFF;
+  if (systemState != STATE_ERROR) {
+    systemState = STATE_OFF;
+  }
   updateOledStatus();
 
   Serial.println("Ready. Commands:");
@@ -131,12 +134,12 @@ void loop() {
 // ======================================================
 // OLED helpers
 // ======================================================
-void initOled() {
-  // If you ever want a more complex UI, put it here.
-  displayMessage("OLED ready");
-}
-
 void updateOledStatus() {
+  if (!displayIsReady()) {
+    Serial.println(F("[DISPLAY] Not ready"));
+    return;
+  }
+
   String stateStr;
   switch (systemState) {
     case STATE_OFF:   stateStr = "OFF";   break;
